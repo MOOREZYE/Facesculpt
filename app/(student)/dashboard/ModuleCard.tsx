@@ -1,6 +1,14 @@
 import Link from 'next/link'
 import type { DbModule, DbLesson, DbProgress } from '@/types'
-import { getModuleProgress, isModuleLocked, isLessonLocked, lessonSlug } from '@/lib'
+import { getModuleProgress, isModuleLocked, isLessonLocked } from '@/lib'
+
+const lessonIcons: Record<string, string> = {
+  video: '🎬',
+  quiz: '✓',
+  download: '⬇️',
+  theory: '📖',
+  info: 'ℹ️',
+}
 
 export default function ModuleCard({
   module,
@@ -17,89 +25,108 @@ export default function ModuleCard({
   const moduleProgress = getModuleProgress(module, sortedLessons, progress)
   const isLocked = isModuleLocked(
     module,
-    [module], // Simplified check — would need all modules in real app
+    [module],
     sortedLessons,
     progress
   )
   const isComplete = moduleProgress.completed === moduleProgress.total && moduleProgress.total > 0
 
-  return (
-    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden hover:border-stone-300 transition-colors">
-      {/* Header */}
-      <Link href={`/course/${moduleSlug}`} className="block p-8 hover:bg-stone-50 transition-colors">
+  if (isLocked) {
+    return (
+      <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-white/40 p-8 opacity-60">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-xl font-bold text-stone-900">{module.title}</h3>
+            <h3 className="text-xl font-bold text-stone-400">{module.title}</h3>
             {module.description && (
-              <p className="text-sm text-stone-600 mt-1">{module.description}</p>
+              <p className="text-sm text-stone-500 mt-1">{module.description}</p>
             )}
           </div>
-          <div className="text-right">
-            <div className="text-sm font-semibold text-stone-800">
-              {moduleProgress.completed}/{moduleProgress.total}
-            </div>
-            <div className="text-xs text-stone-500">lessons</div>
-          </div>
+          <div className="text-3xl">🔒</div>
         </div>
+        <p className="text-sm text-stone-500">Complete the previous module to unlock this content</p>
+      </div>
+    )
+  }
 
-        {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-stone-800 transition-all duration-300"
-            style={{ width: `${moduleProgress.percentage}%` }}
-          />
-        </div>
-      </Link>
+  return (
+    <Link href={`/course/${moduleSlug}`}>
+      <div className="group relative bg-gradient-to-br from-white to-emerald-50/50 rounded-2xl border border-white/60 p-8 shadow-lg hover:shadow-2xl hover:border-emerald-200/60 transition-all duration-300 overflow-hidden cursor-pointer">
+        {/* Decorative accent */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-100/20 rounded-full blur-3xl -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-300"></div>
 
-      {/* Lessons list */}
-      <div className="border-t border-stone-200 divide-y divide-stone-200">
-        {sortedLessons.map(lesson => {
-          const lessonProgress = progress[lesson.id]
-          const lessonIsLocked = isLessonLocked(lesson, sortedLessons, progress)
-          const lessonIsComplete = lessonProgress?.status === 'complete'
-
-          return (
-            <div key={lesson.id}>
-              {lessonIsLocked ? (
-                <div className="px-8 py-4 text-sm text-stone-500 flex items-center gap-3">
-                  <span className="text-lg">🔒</span>
-                  <span className="flex-1">{lesson.title}</span>
-                  <span className="text-xs text-stone-400">Locked</span>
-                </div>
-              ) : (
-                <Link
-                  href={`/course/${moduleSlug}/${lessonSlug(module.order_index, lesson.order_index)}`}
-                  className="px-8 py-4 text-sm text-stone-900 flex items-center gap-3 hover:bg-stone-50 transition-colors"
-                >
-                  <span className="text-lg">
-                    {lessonIsComplete ? '✅' : '○'}
-                  </span>
-                  <span className="flex-1">{lesson.title}</span>
-                  <span className="text-xs text-stone-400">
-                    {lesson.type === 'video' && '🎥'}
-                    {lesson.type === 'quiz' && '📝'}
-                    {lesson.type === 'download' && '📥'}
-                    {lesson.type === 'theory' && '📖'}
-                    {lesson.type === 'info' && 'ℹ️'}
-                  </span>
-                </Link>
+        {/* Content */}
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="text-2xl">{isComplete ? '✨' : '📚'}</div>
+                <h3 className="text-2xl font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                  {module.title}
+                </h3>
+              </div>
+              {module.description && (
+                <p className="text-sm text-stone-600 mt-2">{module.description}</p>
               )}
             </div>
-          )
-        })}
-      </div>
+            <div className="text-right ml-4">
+              <div className="text-3xl font-bold text-emerald-600">{moduleProgress.percentage}%</div>
+              <div className="text-xs text-stone-500">
+                {moduleProgress.completed}/{moduleProgress.total}
+              </div>
+            </div>
+          </div>
 
-      {/* Footer */}
-      {isLocked && (
-        <div className="px-8 py-3 bg-stone-50 text-xs text-stone-600">
-          Complete the previous module to unlock
+          {/* Progress bar */}
+          <div className="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden mb-6">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-500"
+              style={{ width: `${moduleProgress.percentage}%` }}
+            />
+          </div>
+
+          {/* Lessons preview */}
+          <div className="space-y-2 mb-4">
+            {sortedLessons.slice(0, 3).map(lesson => {
+              const lessonProgress = progress[lesson.id]
+              const lessonIsLocked = isLessonLocked(lesson, sortedLessons, progress)
+              const lessonIsComplete = lessonProgress?.status === 'complete'
+
+              return (
+                <div
+                  key={lesson.id}
+                  className={`flex items-center gap-2 text-sm ${
+                    lessonIsLocked
+                      ? 'text-stone-400'
+                      : lessonIsComplete
+                        ? 'text-emerald-600'
+                        : 'text-stone-600'
+                  }`}
+                >
+                  <span className="flex-shrink-0 w-5 text-center">
+                    {lessonIsLocked ? '🔒' : lessonIsComplete ? '✓' : '○'}
+                  </span>
+                  <span className="truncate">{lesson.title}</span>
+                  <span className="ml-auto text-xs opacity-60">
+                    {lessonIcons[lesson.type] || '•'}
+                  </span>
+                </div>
+              )
+            })}
+            {sortedLessons.length > 3 && (
+              <p className="text-xs text-stone-500 italic pt-1">
+                +{sortedLessons.length - 3} more lessons
+              </p>
+            )}
+          </div>
+
+          {/* CTA */}
+          <div className="flex items-center gap-2 text-emerald-600 font-medium group-hover:gap-3 transition-all">
+            <span>{isComplete ? 'Review Module' : 'Continue Learning'}</span>
+            <span className="text-xl">→</span>
+          </div>
         </div>
-      )}
-      {isComplete && (
-        <div className="px-8 py-3 bg-green-50 text-xs text-green-700 font-semibold">
-          ✓ Module complete
-        </div>
-      )}
-    </div>
+      </div>
+    </Link>
   )
 }

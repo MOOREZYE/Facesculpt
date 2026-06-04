@@ -5,7 +5,8 @@ import type { DbProgress, DbUser, DbModule, DbLesson } from '@/types'
 import ExpiryBanner from './ExpiryBanner'
 import ModuleCard from './ModuleCard'
 import ResumeButton from './ResumeButton'
-import ProgressBar from './ProgressBar'
+import HeroSection from './HeroSection'
+import DashboardLayout from './DashboardLayout'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -74,73 +75,49 @@ export default async function DashboardPage() {
   if (isExpired) redirect('/expired')
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-stone-800">
-            FaceSculpt<span className="text-xs align-super">™</span>
-          </h1>
-          <div className="text-sm text-stone-600">
-            {userProfile?.full_name && <span>{userProfile.full_name}</span>}
-          </div>
-        </div>
-      </header>
+    <DashboardLayout userName={userProfile?.full_name}>
+      {/* Expiry warning */}
+      {expiresAt && daysUntilExpiry !== null && (
+        <ExpiryBanner
+          expiresAt={expiresAt}
+          daysUntilExpiry={daysUntilExpiry}
+          isExpired={false}
+        />
+      )}
 
-      <main className="max-w-6xl mx-auto px-6 py-12">
-        {/* Expiry warning */}
-        {expiresAt && daysUntilExpiry !== null && (
-          <ExpiryBanner
-            expiresAt={expiresAt}
-            daysUntilExpiry={daysUntilExpiry}
-            isExpired={false}
-          />
-        )}
+      {/* Hero Section */}
+      <HeroSection
+        userName={userProfile?.full_name || 'Student'}
+        progressPercent={courseProgress.percentage}
+      />
 
-        {/* Welcome + Overall progress */}
+      {/* Resume Button */}
+      {nextLesson && (
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-stone-900 mb-2">Welcome back!</h2>
-          <p className="text-stone-600 mb-8">
-            You&apos;re {courseProgress.percentage}% through the course.
-          </p>
-
-          <div className="bg-white rounded-2xl border border-stone-200 p-8 mb-8">
-            <div className="flex items-end justify-between mb-3">
-              <h3 className="text-lg font-semibold text-stone-800">Your Progress</h3>
-              <span className="text-sm text-stone-500">
-                {courseProgress.completed} of {courseProgress.total} lessons
-              </span>
-            </div>
-            <ProgressBar percentage={courseProgress.percentage} />
-          </div>
-        </div>
-
-        {/* Resume button */}
-        {nextLesson && (
           <ResumeButton
             module={nextLesson.module}
             lesson={nextLesson.lesson}
             moduleSlug={moduleSlug(nextLesson.module.order_index)}
             lessonSlug={lessonSlug(nextLesson.module.order_index, nextLesson.lesson.order_index)}
           />
-        )}
-
-        {/* Modules */}
-        <div>
-          <h3 className="text-2xl font-bold text-stone-900 mb-6">Modules</h3>
-          <div className="grid gap-6">
-            {(modules ?? []).map(module => (
-              <ModuleCard
-                key={module.id}
-                module={module}
-                lessons={(lessons ?? []).filter(l => l.module_id === module.id)}
-                progress={progress}
-                moduleSlug={moduleSlug(module.order_index)}
-              />
-            ))}
-          </div>
         </div>
-      </main>
-    </div>
+      )}
+
+      {/* Modules Grid */}
+      <div>
+        <h2 className="text-3xl font-bold text-stone-900 mb-8">Your Learning Path</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1">
+          {(modules ?? []).map(module => (
+            <ModuleCard
+              key={module.id}
+              module={module}
+              lessons={(lessons ?? []).filter(l => l.module_id === module.id)}
+              progress={progress}
+              moduleSlug={moduleSlug(module.order_index)}
+            />
+          ))}
+        </div>
+      </div>
+    </DashboardLayout>
   )
 }
