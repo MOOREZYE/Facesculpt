@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCourseProgress, getNextLesson, moduleSlug, lessonSlug } from '@/lib'
 import type { DbProgress, DbUser, DbModule, DbLesson } from '@/types'
-import ModuleCard from './ModuleCard'
+
 
 export default async function DashboardPage() {
   const supabase = await createClient()
