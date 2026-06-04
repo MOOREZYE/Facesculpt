@@ -24,13 +24,19 @@ export default async function DashboardPage() {
     .single()) as { data: DbUser | null }
 
   // Fetch all published modules in order
-  const { data: modules } = (await supabase
+  const modulesResponse = await supabase
     .from('modules')
     .select('*')
     .eq('is_published', true)
-    .order('order_index', { ascending: true })) as { data: DbModule[] | null }
+    .order('order_index', { ascending: true })
 
-  console.log('Dashboard fetch:', { userId, modules: modules?.length, lessonsCount: 0 })
+  const modules = modulesResponse.data as DbModule[] | null
+
+  console.log('Modules response:', {
+    data: modules?.length,
+    error: modulesResponse.error,
+    status: modulesResponse.status
+  })
 
   // Fetch all published lessons
   const { data: lessons } = (await supabase
