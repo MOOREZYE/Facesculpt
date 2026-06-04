@@ -85,7 +85,7 @@ export default async function DashboardPage() {
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-200 font-medium text-sm transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-            Courses
+            Course
           </a>
           <a
             href="#"
@@ -192,24 +192,81 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Modules Grid */}
-            <div>
-              <h3 className="text-xl font-semibold text-zinc-50 mb-5">Your Modules</h3>
-              <div className="space-y-3">
-                {(modules ?? []).slice(0, 4).map(module => {
-                  const moduleLessons = (lessons ?? []).filter(l => l.module_id === module.id)
-                  return (
-                    <ModuleCard
-                      key={module.id}
-                      module={module}
-                      lessons={moduleLessons}
-                      progress={progress}
-                      moduleSlug={moduleSlug(module.order_index)}
-                    />
-                  )
-                })}
-              </div>
-            </div>
+            {/* Next Module */}
+            {(() => {
+              const sortedModules = (modules ?? []).sort((a, b) => a.order_index - b.order_index)
+              // Find the first incomplete module
+              const nextModule = sortedModules.find(m => {
+                const mLessons = (lessons ?? []).filter(l => l.module_id === m.id && l.is_published)
+                return mLessons.some(l => progress[l.id]?.status !== 'complete')
+              })
+              // The module before nextModule is the "current in progress" one
+              const currentModuleIndex = nextModule ? sortedModules.indexOf(nextModule) : -1
+              const prevModule = currentModuleIndex > 0 ? sortedModules[currentModuleIndex - 1] : null
+              // Locked = nextModule is not the first module
+              const isLocked = currentModuleIndex > 0
+
+              if (!nextModule) return (
+                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center">
+                  <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-zinc-50">All modules complete</h3>
+                  <p className="text-zinc-400 text-sm mt-1">You&apos;ve completed the full course</p>
+                </div>
+              )
+
+              const moduleLessons = (lessons ?? []).filter(l => l.module_id === nextModule.id)
+              const moduleProgressData = moduleLessons.filter(l => progress[l.id]?.status === 'complete').length
+
+              return (
+                <div>
+                  <h3 className="text-xl font-semibold text-zinc-50 mb-5">Your Next Module</h3>
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+                    {/* Lock banner */}
+                    {isLocked && prevModule && (
+                      <div className="flex items-center gap-3 px-6 py-3 bg-zinc-800/60 border-b border-zinc-800">
+                        <svg className="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                        <p className="text-sm text-zinc-400">
+                          Complete <span className="text-zinc-200 font-medium">{prevModule.title}</span> to unlock
+                        </p>
+                      </div>
+                    )}
+                    <div className="p-8">
+                      <div className="flex items-start justify-between mb-6">
+                        <div>
+                          <h4 className="text-xl font-bold text-zinc-50">{nextModule.title}</h4>
+                          {nextModule.description && (
+                            <p className="text-sm text-zinc-500 mt-1">{nextModule.description}</p>
+                          )}
+                        </div>
+                        <div className="text-right ml-4">
+                          <div className="text-sm font-semibold text-zinc-300 tabular-nums">
+                            {moduleProgressData}/{moduleLessons.length}
+                          </div>
+                          <div className="text-xs text-zinc-500">lessons</div>
+                        </div>
+                      </div>
+                      <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden mb-6">
+                        <div
+                          className="h-full bg-emerald-500 transition-all duration-300"
+                          style={{ width: `${moduleLessons.length > 0 ? Math.round((moduleProgressData / moduleLessons.length) * 100) : 0}%` }}
+                        />
+                      </div>
+                      {!isLocked && (
+                        <a
+                          href={`/course/${moduleSlug(nextModule.order_index)}`}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 text-zinc-950 rounded-xl font-semibold text-sm hover:bg-emerald-400 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                          Continue Module
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
           </div>
 
           {/* Sidebar */}

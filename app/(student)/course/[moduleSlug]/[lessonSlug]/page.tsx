@@ -82,7 +82,7 @@ export default async function LessonPage({
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-zinc-800 text-zinc-50 font-medium text-sm"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-            Courses
+            Course
           </a>
           <a
             href="#"
@@ -106,45 +106,14 @@ export default async function LessonPage({
 
       {/* Main Content Area */}
       <div className="flex-1 md:ml-64 min-h-screen flex flex-col">
-        {/* Top Navigation */}
-        <header className="bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-40">
-          <div className="px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-8">
-              <h1 className="text-lg font-semibold text-zinc-50">FaceSculpt™</h1>
-              <nav className="hidden md:flex gap-8">
-                <a href="/dashboard" className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors">
-                  Dashboard
-                </a>
-                <a href="/course" className="text-sm text-zinc-100 font-medium border-b-2 border-emerald-400 pb-1">
-                  Courses
-                </a>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="hidden lg:block px-4 py-2 bg-zinc-900 rounded-lg text-sm text-zinc-200 placeholder-zinc-500 border border-zinc-800 focus:outline-none focus:border-zinc-700"
-              />
-              <button className="text-zinc-400 hover:text-zinc-100 transition-colors" aria-label="Notifications">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Breadcrumb */}
-          <div className="px-6 py-3 flex items-center gap-2 text-sm text-zinc-500 bg-zinc-900/30 border-t border-zinc-800/60">
-            <a href="/course" className="hover:text-zinc-300 transition-colors">
-              Courses
-            </a>
-            <span className="text-zinc-700">/</span>
-            <a href={`/course/${slugStr}`} className="hover:text-zinc-300 transition-colors">
-              {currentModule.title}
-            </a>
-            <span className="text-zinc-700">/</span>
-            <span className="text-zinc-200">{currentLesson.title}</span>
-          </div>
-        </header>
+        {/* Breadcrumb only */}
+        <div className="px-6 py-4 flex items-center gap-2 text-sm text-zinc-500 border-b border-zinc-800 sticky top-0 bg-zinc-950/90 backdrop-blur-md z-40">
+          <a href="/dashboard" className="hover:text-zinc-300 transition-colors">Dashboard</a>
+          <span className="text-zinc-700">/</span>
+          <a href={`/course/${slugStr}`} className="hover:text-zinc-300 transition-colors">{currentModule.title}</a>
+          <span className="text-zinc-700">/</span>
+          <span className="text-zinc-200">{currentLesson.title}</span>
+        </div>
 
         {/* Main Content */}
         <div className="flex-1 px-6 py-8">
