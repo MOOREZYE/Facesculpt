@@ -2,70 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Luxury colour tokens ─────────────────────────────── */
 :root {
-  /* Dark theme tokens — refined, editorial, not SaaS */
-  --background: #09090b;        /* zinc-950 */
-  --surface: #18181b;           /* zinc-900 */
-  --surface-2: #27272a;         /* zinc-800 */
-  --border: #27272a;            /* zinc-800 */
-  --foreground: #fafafa;        /* zinc-50 */
-  --muted: #a1a1aa;             /* zinc-400 */
-  --accent: #34d399;            /* emerald-400 */
+  --background:    #0D0B09;
+  --surface:       #151210;
+  --surface-2:     #1E1A16;
+  --border:        #2A2420;
+  --border-warm:   #3D3028;
+  --foreground:    #F4EDE4;
+  --muted:         #9A8878;
+  --gold:          #C9A96E;
+  --gold-dim:      #A88850;
 }
 
-html {
-  color-scheme: dark;
-}
+html { color-scheme: dark; }
 
+/* ── Base ─────────────────────────────────────────────── */
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* ── Grain texture overlay ────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Subtle scrollbar for dark theme */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #09090b;
-}
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--background); }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: var(--border-warm);
   border-radius: 6px;
-  border: 2px solid #09090b;
+  border: 2px solid var(--background);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+::-webkit-scrollbar-thumb:hover { background: #4D3E32; }
+
+/* ── Cormorant italic display helper ─────────────────── */
+.serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  letter-spacing: -0.01em;
 }
 
-/* Prose styling for theory lesson content in dark mode */
-.prose-dark {
-  color: #d4d4d8;
+/* ── Luxury card ─────────────────────────────────────── */
+.card {
+  background: linear-gradient(145deg, #1A1612 0%, #141110 100%);
+  border: 1px solid #2E2620;
+  box-shadow:
+    inset 0 1px 0 rgba(201,169,110,0.04),
+    0 1px 3px rgba(0,0,0,0.4);
+  border-radius: 1rem;
 }
-.prose-dark h1,
-.prose-dark h2,
-.prose-dark h3 {
-  color: #fafafa;
+
+/* ── Gold accent border ──────────────────────────────── */
+.border-gold {
+  border-color: rgba(201,169,110,0.35);
+}
+
+/* ── Prose for theory content ────────────────────────── */
+.prose-warm {
+  color: #CCC0B4;
+  line-height: 1.85;
+}
+.prose-warm h1,
+.prose-warm h2,
+.prose-warm h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  color: #F4EDE4;
   font-weight: 600;
-  margin-top: 1.5em;
+  margin-top: 1.6em;
   margin-bottom: 0.5em;
+  letter-spacing: -0.01em;
 }
-.prose-dark h2 {
-  font-size: 1.5rem;
-}
-.prose-dark p {
-  margin-bottom: 1em;
-  line-height: 1.75;
-}
-.prose-dark strong {
-  color: #fafafa;
-}
+.prose-warm h2 { font-size: 1.6rem; }
+.prose-warm h3 { font-size: 1.25rem; }
+.prose-warm p  { margin-bottom: 1em; }
+.prose-warm strong { color: #F4EDE4; }

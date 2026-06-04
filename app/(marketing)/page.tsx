@@ -2,16 +2,16 @@ import Link from 'next/link'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-warm-950">
       {/* Navigation */}
-      <nav className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+      <nav className="border-b border-warm-700 bg-warm-950/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold tracking-tight text-zinc-50">
-            FaceSculpt<span className="text-xs align-super text-zinc-500">™</span>
+          <h1 className="serif text-xl text-warm-50">
+            FaceSculpt<span className="text-xs align-super not-italic text-warm-500">™</span>
           </h1>
           <Link
             href="/login"
-            className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors"
+            className="text-sm text-warm-400 hover:text-warm-100 transition-colors"
           >
             Sign in
           </Link>
@@ -21,14 +21,14 @@ export default function HomePage() {
       {/* Hero */}
       <div className="max-w-5xl mx-auto px-6 py-24">
         <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-500 text-xs font-medium mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-400" />
             Professional Certification Course
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-zinc-50 mb-6 text-balance">
-            Master the Art of Facial Sculpting
+          <h2 className="serif text-5xl md:text-7xl text-warm-50 mb-8 text-balance leading-none">
+            Master the Art<br />of Facial Sculpting
           </h2>
-          <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-warm-400 mb-10 max-w-2xl mx-auto leading-relaxed">
             A comprehensive professional training course for beauty therapists and skin specialists.
             Learn FaceSculpt™ techniques, anatomy, and protocols from industry experts.
           </p>
@@ -36,13 +36,13 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="#enrol"
-              className="bg-emerald-500 text-zinc-950 px-8 py-3.5 rounded-xl font-semibold hover:bg-emerald-400 transition-colors"
+              className="bg-gold-500 text-warm-950 px-8 py-3.5 rounded-xl font-semibold hover:bg-gold-400 transition-colors"
             >
               Enrol Now
             </a>
             <a
               href="#about"
-              className="border border-zinc-800 text-zinc-200 px-8 py-3.5 rounded-xl font-medium hover:bg-zinc-900 transition-colors"
+              className="border border-warm-700 text-warm-200 px-8 py-3.5 rounded-xl font-medium hover:bg-warm-900 transition-colors"
             >
               Learn More
             </a>
@@ -74,14 +74,14 @@ export default function HomePage() {
               ),
             },
           ].map(f => (
-            <div key={f.title} className="bg-zinc-900 rounded-2xl p-8 border border-zinc-800">
-              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+            <div key={f.title} className="bg-warm-900 rounded-2xl p-8 border border-warm-700">
+              <div className="w-11 h-11 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center mb-5">
+                <svg className="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   {f.icon}
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-zinc-50 mb-2">{f.title}</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">{f.body}</p>
+              <h3 className="text-lg font-semibold text-warm-50 mb-2">{f.title}</h3>
+              <p className="text-sm text-warm-400 leading-relaxed">{f.body}</p>
             </div>
           ))}
         </div>
@@ -89,31 +89,31 @@ export default function HomePage() {
         {/* Enrol CTA */}
         <div
           id="enrol"
-          className="relative overflow-hidden bg-zinc-900 rounded-3xl border border-zinc-800 p-12 text-center max-w-2xl mx-auto"
+          className="relative overflow-hidden bg-warm-900 rounded-3xl border border-warm-700 p-12 text-center max-w-2xl mx-auto"
         >
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl -mt-48" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold-500/5 rounded-full blur-3xl -mt-48" />
           <div className="relative">
-            <h3 className="text-3xl font-bold text-zinc-50 mb-4">Ready to get started?</h3>
-            <p className="text-zinc-400 mb-8 max-w-md mx-auto">
+            <h3 className="serif text-4xl text-warm-50 mb-5">Ready to begin?</h3>
+            <p className="text-warm-400 mb-8 max-w-md mx-auto">
               Complete access to all 8 modules, 38 lessons, and quizzes. Learn at your own pace.
             </p>
 
             <button
               disabled
-              className="bg-zinc-800 text-zinc-400 px-8 py-3.5 rounded-xl font-medium cursor-not-allowed border border-zinc-700"
+              className="bg-warm-800 text-warm-400 px-8 py-3.5 rounded-xl font-medium cursor-not-allowed border border-warm-600"
               title="Stripe integration coming soon"
             >
               Enrol — Coming soon
             </button>
 
-            <p className="text-xs text-zinc-600 mt-4">Stripe checkout will be available shortly</p>
+            <p className="text-xs text-warm-500 mt-4">Stripe checkout will be available shortly</p>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 mt-12 py-8">
-        <div className="max-w-5xl mx-auto px-6 text-center text-sm text-zinc-600">
+      <footer className="border-t border-warm-700 mt-12 py-8">
+        <div className="max-w-5xl mx-auto px-6 text-center text-sm text-warm-500">
           <p>FaceSculpt™ Professional Training Platform</p>
         </div>
       </footer>

@@ -30,8 +30,8 @@ export default function ForgotPasswordForm() {
 
   if (submitted) {
     return (
-      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-3">
-        <p className="text-sm text-emerald-300">
+      <div className="bg-gold-500/10 border border-gold-500/20 rounded-lg px-4 py-3">
+        <p className="text-sm text-gold-400">
           Check your email for a password reset link. It expires in 24 hours.
         </p>
       </div>
@@ -41,7 +41,7 @@ export default function ForgotPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-warm-300 mb-1">
           Email address
         </label>
         <input
@@ -51,7 +51,7 @@ export default function ForgotPasswordForm() {
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-zinc-700"
+          className="w-full rounded-lg border border-warm-700 bg-warm-950 px-3.5 py-2.5 text-sm text-warm-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-warm-600"
           placeholder="you@example.com"
         />
       </div>
@@ -63,7 +63,7 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-emerald-500 text-zinc-950 rounded-lg py-2.5 text-sm font-semibold hover:bg-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gold-500 text-warm-950 rounded-lg py-2.5 text-sm font-semibold hover:bg-gold-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? 'Sending…' : 'Send reset link'}
       </button>

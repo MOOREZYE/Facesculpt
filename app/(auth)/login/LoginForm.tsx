@@ -36,7 +36,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-warm-300 mb-1">
           Email address
         </label>
         <input
@@ -46,19 +46,19 @@ export default function LoginForm() {
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-zinc-700"
+          className="w-full rounded-lg border border-warm-700 bg-warm-950 px-3.5 py-2.5 text-sm text-warm-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-warm-600"
           placeholder="you@example.com"
         />
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-1">
-          <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
+          <label htmlFor="password" className="block text-sm font-medium text-warm-300">
             Password
           </label>
           <Link
             href="/forgot-password"
-            className="text-xs text-zinc-500 hover:text-zinc-50 transition-colors"
+            className="text-xs text-warm-500 hover:text-warm-50 transition-colors"
           >
             Forgot password?
           </Link>
@@ -70,7 +70,7 @@ export default function LoginForm() {
           required
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-zinc-700"
+          className="w-full rounded-lg border border-warm-700 bg-warm-950 px-3.5 py-2.5 text-sm text-warm-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-gold-500/20 focus:border-warm-600"
           placeholder="••••••••"
         />
       </div>
@@ -82,7 +82,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-emerald-500 text-zinc-950 rounded-lg py-2.5 text-sm font-semibold hover:bg-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gold-500 text-warm-950 rounded-lg py-2.5 text-sm font-semibold hover:bg-gold-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? 'Signing in…' : 'Sign in'}
       </button>
