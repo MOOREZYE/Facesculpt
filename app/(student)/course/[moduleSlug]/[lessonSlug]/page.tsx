@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { parseModuleSlug, parseLessonSlug } from '@/lib'
+import { parseModuleSlug, parseLessonSlug, isModuleLocked, isLessonLocked } from '@/lib'
 import type { DbModule, DbLesson, DbProgress } from '@/types'
 import LessonViewer from './LessonViewer'
 import CourseContentSidebar from './CourseContentSidebar'
@@ -46,6 +46,23 @@ export default async function LessonPage({
   const currentLesson = (lessons ?? []).find(l => l.order_index === lessonIndex && l.module_id === currentModule?.id)
 
   if (!currentModule || !currentLesson) {
+    redirect('/dashboard')
+  }
+
+  // ── Access enforcement ────────────────────────────────────────
+  // Block access if the module or lesson is locked
+  if (isModuleLocked(currentModule, modules ?? [], lessons ?? [], progress)) {
+    redirect('/dashboard')
+  }
+  const moduleLessonsForLock = (lessons ?? []).filter(l => l.module_id === currentModule.id)
+  if (isLessonLocked(currentLesson, moduleLessonsForLock, progress)) {
+    // Redirect to the first incomplete lesson in this module instead
+    const firstIncomplete = moduleLessonsForLock
+      .sort((a, b) => a.order_index - b.order_index)
+      .find(l => progress[l.id]?.status !== 'complete')
+    if (firstIncomplete) {
+      redirect(`/course/${slugStr}/${slugStr2.replace(/lesson-\d+-\d+/, `lesson-${String(currentModule.order_index).padStart(2,'0')}-${String(firstIncomplete.order_index).padStart(2,'0')}`)}`)
+    }
     redirect('/dashboard')
   }
 

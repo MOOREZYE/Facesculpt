@@ -77,20 +77,36 @@ export function getCourseProgress(
   }
 }
 
-// Find the next incomplete lesson for "resume" button
+// Find the current lesson for "resume" button
+// Prefers in_progress, then falls back to first not_started in the active module
 export function getNextLesson(
   modules: DbModule[],
   lessons: DbLesson[],
   progress: Record<string, DbProgress | undefined>
 ): { module: DbModule; lesson: DbLesson } | null {
-  // Go through modules in order
-  for (const mod of modules.sort((a, b) => a.order_index - b.order_index)) {
-    if (!mod.is_published) continue
+  const sortedModules = modules.sort((a, b) => a.order_index - b.order_index)
 
-    // Check if this module is locked
+  // First pass: find an in_progress lesson
+  for (const mod of sortedModules) {
+    if (!mod.is_published) continue
     if (isModuleLocked(mod, modules, lessons, progress)) continue
 
-    // Find first incomplete lesson in this module
+    const moduleLessons = lessons
+      .filter(l => l.module_id === mod.id && l.is_published)
+      .sort((a, b) => a.order_index - b.order_index)
+
+    for (const lesson of moduleLessons) {
+      if (progress[lesson.id]?.status === 'in_progress') {
+        return { module: mod, lesson }
+      }
+    }
+  }
+
+  // Second pass: first not_started lesson in first unlocked incomplete module
+  for (const mod of sortedModules) {
+    if (!mod.is_published) continue
+    if (isModuleLocked(mod, modules, lessons, progress)) continue
+
     const moduleLessons = lessons
       .filter(l => l.module_id === mod.id && l.is_published)
       .sort((a, b) => a.order_index - b.order_index)

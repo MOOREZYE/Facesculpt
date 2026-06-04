@@ -10,6 +10,7 @@ export type DbQuizQuestion   = Database['public']['Tables']['quiz_questions']['R
 export type DbQuizOption     = Database['public']['Tables']['quiz_options']['Row']
 export type DbProgress       = Database['public']['Tables']['student_progress']['Row']
 export type DbCertificate    = Database['public']['Tables']['certificates']['Row']
+export type DbLessonNote     = Database['public']['Tables']['lesson_notes']['Row']
 
 // ── Lesson types & status ─────────────────────────────────────
 export type LessonType   = DbLesson['type']

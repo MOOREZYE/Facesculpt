@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { DbLesson, DbModule, DbProgress } from '@/types'
 import { lessonSlug } from '@/types'
+import LessonNotes from './LessonNotes'
 
 interface LessonViewerProps {
   lesson: DbLesson
@@ -17,10 +18,11 @@ interface LessonViewerProps {
 export default function LessonViewer({
   lesson,
   module,
+  userId,
   prevLesson,
   nextLesson,
 }: LessonViewerProps) {
-  const [activeTab, setActiveTab] = useState<'notes' | 'resources' | 'discussion'>('notes')
+  const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'resources'>('content')
 
   const metaLabel =
     lesson.type === 'video'
@@ -80,17 +82,21 @@ export default function LessonViewer({
           {/* Tabs */}
           <div className="mt-8 border-b border-warm-800">
             <div className="flex gap-8">
-              {(['notes', 'resources', 'discussion'] as const).map(tab => (
+              {([
+                { key: 'content', label: 'Lesson' },
+                { key: 'notes', label: 'My Notes' },
+                { key: 'resources', label: 'Resources' },
+              ] as const).map(tab => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`pb-4 text-sm border-b-2 transition-colors capitalize tracking-wide ${
-                    activeTab === tab
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`pb-4 text-sm border-b-2 transition-colors tracking-wide ${
+                    activeTab === tab.key
                       ? 'border-gold-500 text-warm-100'
                       : 'border-transparent text-warm-600 hover:text-warm-400'
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -98,7 +104,7 @@ export default function LessonViewer({
 
           {/* Tab Content */}
           <div className="mt-8">
-            {activeTab === 'notes' && (
+            {activeTab === 'content' && (
               <div className="space-y-4">
                 {lesson.content_html ? (
                   <div
@@ -107,21 +113,19 @@ export default function LessonViewer({
                   />
                 ) : (
                   <div className="border border-warm-800 rounded-lg p-8 text-center" style={{background:'#111009'}}>
-                    <p className="text-warm-600 text-sm">No lesson content available yet.</p>
+                    <p className="text-warm-600 text-sm">Lesson content will appear here.</p>
                   </div>
                 )}
               </div>
             )}
 
-            {activeTab === 'resources' && (
-              <div className="border border-warm-800 rounded-lg p-8 text-center text-warm-600 text-sm" style={{background:'#111009'}}>
-                <p>Resources coming soon</p>
-              </div>
+            {activeTab === 'notes' && (
+              <LessonNotes lessonId={lesson.id} userId={userId} />
             )}
 
-            {activeTab === 'discussion' && (
+            {activeTab === 'resources' && (
               <div className="border border-warm-800 rounded-lg p-8 text-center text-warm-600 text-sm" style={{background:'#111009'}}>
-                <p>Discussion forum coming soon</p>
+                <p>Downloadable resources will appear here.</p>
               </div>
             )}
           </div>

@@ -203,6 +203,24 @@ export type Database = {
           completed_at?: string | null
         }
       }
+      lesson_notes: {
+        Row: {
+          id: string
+          user_id: string
+          lesson_id: string
+          content: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          lesson_id: string
+          content?: string
+        }
+        Update: {
+          content?: string
+        }
+      }
       certificates: {
         Row: {
           id: string

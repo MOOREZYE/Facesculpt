@@ -135,15 +135,16 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-8">
-            {/* UP NEXT Card */}
+            {/* CURRENT LESSON Card */}
             {nextLesson && (
               <div className="card relative overflow-hidden p-10">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/3 rounded-full blur-3xl -mr-20 -mt-20" />
                 <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
                   <div className="flex-1">
-                    <p className="text-xs tracking-[0.2em] uppercase text-gold-500 mb-4">Continue Learning</p>
+                    <p className="text-xs tracking-[0.2em] uppercase text-gold-500 mb-2">Current Lesson</p>
+                    <p className="text-xs text-warm-600 mb-4">{nextLesson.module.title}</p>
                     <h3 className="serif text-3xl text-warm-50 mb-3 leading-snug">{nextLesson.lesson.title}</h3>
-                    <p className="text-warm-500 text-sm capitalize">{nextLesson.lesson.type} lesson</p>
+                    <p className="text-warm-500 text-sm capitalize">{nextLesson.lesson.type}</p>
                   </div>
                   <a
                     href={`/course/${moduleSlug(nextLesson.module.order_index)}/${lessonSlug(
@@ -180,72 +181,44 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            {/* Next Module */}
+            {/* Next Module — the locked module after the current one */}
             {(() => {
               const sortedModules = (modules ?? []).sort((a, b) => a.order_index - b.order_index)
-              const nextModule = sortedModules.find(m => {
+              // Current module = first with any incomplete lessons
+              const currentModuleIdx = sortedModules.findIndex(m => {
                 const mLessons = (lessons ?? []).filter(l => l.module_id === m.id && l.is_published)
                 return mLessons.some(l => progress[l.id]?.status !== 'complete')
               })
-              const currentModuleIndex = nextModule ? sortedModules.indexOf(nextModule) : -1
-              const prevModule = currentModuleIndex > 0 ? sortedModules[currentModuleIndex - 1] : null
-              const isLocked = currentModuleIndex > 0
+              const currentModule = currentModuleIdx >= 0 ? sortedModules[currentModuleIdx] : null
+              // Next locked module = the one right after current
+              const lockedModule = currentModule ? sortedModules[currentModuleIdx + 1] : null
 
-              if (!nextModule) return (
-                <div className="card p-10 text-center">
-                  <div className="w-12 h-12 rounded-full bg-gold-500/10 border border-gold-500/20 flex items-center justify-center mx-auto mb-5">
-                    <svg className="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                  </div>
-                  <h3 className="serif text-xl text-warm-50">All modules complete</h3>
-                  <p className="text-warm-500 text-sm mt-2">You&apos;ve completed the full course</p>
-                </div>
-              )
+              if (!lockedModule && !currentModule) return null
+              if (!lockedModule) return null
 
-              const moduleLessons = (lessons ?? []).filter(l => l.module_id === nextModule.id)
-              const moduleProgressData = moduleLessons.filter(l => progress[l.id]?.status === 'complete').length
+              const lessonCount = (lessons ?? []).filter(l => l.module_id === lockedModule.id).length
 
               return (
                 <div>
                   <p className="text-xs tracking-[0.2em] uppercase text-warm-500 mb-5">Your Next Module</p>
-                  <div className="card overflow-hidden">
-                    {isLocked && prevModule && (
-                      <div className="flex items-center gap-3 px-8 py-4 border-b border-warm-700/60" style={{background:'#1A1612'}}>
-                        <svg className="w-3.5 h-3.5 text-warm-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-                        <p className="text-xs text-warm-500 tracking-wide">
-                          Complete <span className="text-warm-300">{prevModule.title}</span> to unlock
-                        </p>
-                      </div>
-                    )}
+                  <div className="card overflow-hidden opacity-80">
                     <div className="p-10">
-                      <div className="flex items-start justify-between mb-8">
-                        <div>
-                          <h4 className="serif text-2xl text-warm-50 mb-2">{nextModule.title}</h4>
-                          {nextModule.description && (
-                            <p className="text-sm text-warm-500">{nextModule.description}</p>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h4 className="serif text-2xl text-warm-400 mb-2">{lockedModule.title}</h4>
+                          {lockedModule.description && (
+                            <p className="text-sm text-warm-600">{lockedModule.description}</p>
                           )}
                         </div>
-                        <div className="text-right ml-6">
-                          <div className="text-sm text-warm-400 tabular-nums">
-                            {moduleProgressData}<span className="text-warm-600">/{moduleLessons.length}</span>
-                          </div>
-                          <div className="text-xs text-warm-600 mt-0.5">lessons</div>
+                        <div className="ml-6 flex-shrink-0">
+                          <svg className="w-6 h-6 text-warm-600" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                          </svg>
                         </div>
                       </div>
-                      <div className="w-full h-px bg-warm-700 rounded-full overflow-hidden mb-8">
-                        <div
-                          className="h-full bg-gold-500 transition-all duration-500"
-                          style={{ width: `${moduleLessons.length > 0 ? Math.round((moduleProgressData / moduleLessons.length) * 100) : 0}%` }}
-                        />
-                      </div>
-                      {!isLocked && (
-                        <a
-                          href={`/course/${moduleSlug(nextModule.order_index)}`}
-                          className="inline-flex items-center gap-2 px-6 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold text-sm hover:bg-gold-400 transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                          Continue Module
-                        </a>
-                      )}
+                      <p className="text-xs text-warm-600 tracking-wide">
+                        {lessonCount} lessons · Complete <span className="text-warm-500">{currentModule?.title}</span> to unlock
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -267,23 +240,6 @@ export default async function DashboardPage() {
               <p className="text-xs tracking-[0.18em] uppercase text-warm-500 mb-5">Lessons</p>
               <div className="text-6xl font-light text-warm-100 tabular-nums tracking-tight mb-1">{courseProgress.completed}</div>
               <p className="text-xs text-warm-500 tracking-wide">of {courseProgress.total} completed</p>
-            </div>
-
-            {/* Access */}
-            <div className="card p-8">
-              <p className="text-xs tracking-[0.18em] uppercase text-warm-500 mb-5">Access</p>
-              {expiresAt ? (
-                <>
-                  <div className="text-4xl font-light text-warm-100 tabular-nums tracking-tight mb-1">
-                    {daysUntilExpiry !== null && daysUntilExpiry > 0 ? daysUntilExpiry : '—'}
-                  </div>
-                  <p className="text-xs text-warm-500 tracking-wide">
-                    days remaining · {expiresAt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                  </p>
-                </>
-              ) : (
-                <p className="text-sm text-warm-400 italic">Lifetime access</p>
-              )}
             </div>
           </div>
         </div>
