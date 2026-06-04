@@ -23,36 +23,46 @@ export default function ModuleCard({
       <div
         className={`rounded-2xl p-6 border transition-all cursor-pointer ${
           isLocked
-            ? 'bg-stone-50 border-stone-200 opacity-60'
-            : 'bg-white border-stone-200 hover:border-stone-300 hover:shadow-md'
+            ? 'bg-zinc-900/40 border-zinc-800/60 opacity-60'
+            : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
         }`}
       >
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h4 className="font-bold text-stone-900 text-lg">{module.title}</h4>
-            {module.description && <p className="text-sm text-stone-600 mt-1">{module.description}</p>}
+            <div className="flex items-center gap-2">
+              {isLocked && (
+                <svg className="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+              )}
+              <h4 className={`font-semibold text-lg ${isLocked ? 'text-zinc-400' : 'text-zinc-50'}`}>
+                {module.title}
+              </h4>
+            </div>
+            {module.description && <p className="text-sm text-zinc-500 mt-1">{module.description}</p>}
           </div>
           <div className="text-right ml-4">
-            <div className="text-sm font-semibold text-stone-800">
+            <div className="text-sm font-semibold text-zinc-300 tabular-nums">
               {moduleProgress.completed}/{moduleProgress.total}
             </div>
-            <div className="text-xs text-stone-500">lessons</div>
+            <div className="text-xs text-zinc-500">lessons</div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
           <div
-            className="h-full bg-emerald-600 transition-all duration-300"
+            className="h-full bg-emerald-500 transition-all duration-300"
             style={{ width: `${moduleProgress.percentage}%` }}
           />
         </div>
 
         {isLocked && (
-          <div className="mt-3 text-xs text-stone-500">Complete previous module to unlock</div>
+          <div className="mt-3 text-xs text-zinc-500">Complete previous module to unlock</div>
         )}
         {isComplete && (
-          <div className="mt-3 text-xs font-semibold text-emerald-700">✓ Module complete</div>
+          <div className="mt-3 text-xs font-semibold text-emerald-400 flex items-center gap-1">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+            Module complete
+          </div>
         )}
       </div>
     </Link>
