@@ -30,6 +30,8 @@ export default async function DashboardPage() {
     .eq('is_published', true)
     .order('order_index', { ascending: true })) as { data: DbModule[] | null }
 
+  console.log('Dashboard fetch:', { userId, modules: modules?.length, lessonsCount: 0 })
+
   // Fetch all published lessons
   const { data: lessons } = (await supabase
     .from('lessons')
