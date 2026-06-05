@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { DbLesson, DbModule, DbProgress } from '@/types'
 import { lessonSlug } from '@/types'
@@ -28,9 +29,39 @@ export default function LessonViewer({
   prevLesson,
   nextLesson,
 }: LessonViewerProps) {
+  const router = useRouter()
   const isQuiz = lesson.type === 'quiz'
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'resources'>('content')
   const [completed, setCompleted] = useState(currentProgress?.status === 'complete')
+  const [resetting, setResetting] = useState(false)
+
+  async function resetCompletion() {
+    setResetting(true)
+    try {
+      await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonId: lesson.id, reset: true }),
+      })
+      setCompleted(false)
+      router.refresh()
+    } finally {
+      setResetting(false)
+    }
+  }
+
+  const debugBar = (
+    <div className="mt-4 flex justify-center">
+      <button
+        onClick={resetCompletion}
+        disabled={resetting}
+        className="text-xs text-warm-700 hover:text-warm-400 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+      >
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+        {resetting ? 'Resetting…' : 'Reset completion (debug)'}
+      </button>
+    </div>
+  )
 
   // Video and quiz lessons must be completed before advancing.
   const requiresCompletion = isQuiz || lesson.type === 'video'
@@ -105,6 +136,7 @@ export default function LessonViewer({
           </div>
         </div>
         {nav}
+        {debugBar}
       </div>
     )
   }
@@ -220,6 +252,7 @@ export default function LessonViewer({
       </div>
 
       {nav}
+      {debugBar}
     </div>
   )
 }

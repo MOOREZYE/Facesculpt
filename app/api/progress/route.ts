@@ -9,12 +9,23 @@ export async function POST(req: Request) {
   const { data: { user } } = await cookieClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const body = (await req.json()) as { lessonId: string; status?: 'in_progress' | 'complete' }
-  const { lessonId } = body
+  const body = (await req.json()) as { lessonId: string; status?: 'in_progress' | 'complete'; reset?: boolean }
+  const { lessonId, reset } = body
   const status = body.status ?? 'complete'
   if (!lessonId) return NextResponse.json({ error: 'Missing lessonId' }, { status: 400 })
 
   const db = createServiceClient() as unknown as SupabaseClient
+
+  // Debug/testing: remove the progress row so the lesson returns to not_started
+  if (reset) {
+    const { error } = await db
+      .from('student_progress')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('lesson_id', lessonId)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ data: { status: 'not_started' }, error: null })
+  }
 
   // Confirm the lesson exists and is published (don't let arbitrary ids be marked)
   const { data: lesson } = (await db
