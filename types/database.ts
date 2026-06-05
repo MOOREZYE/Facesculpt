@@ -203,6 +203,32 @@ export type Database = {
           completed_at?: string | null
         }
       }
+      student_onboarding: {
+        Row: {
+          user_id: string
+          full_name: string | null
+          country: string | null
+          years_experience: string | null
+          offers_facials: string | null
+          primary_goal: string | null
+          work_setting: string | null
+          heard_about: string | null
+          biggest_challenge: string | null
+          completed_at: string
+        }
+        Insert: {
+          user_id: string
+          full_name?: string | null
+          country?: string | null
+          years_experience?: string | null
+          offers_facials?: string | null
+          primary_goal?: string | null
+          work_setting?: string | null
+          heard_about?: string | null
+          biggest_challenge?: string | null
+        }
+        Update: Record<string, never>
+      }
       lesson_notes: {
         Row: {
           id: string

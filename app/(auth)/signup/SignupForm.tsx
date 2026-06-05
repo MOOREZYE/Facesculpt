@@ -75,8 +75,8 @@ export default function SignupForm() {
       return
     }
 
-    // Success — redirect to dashboard
-    router.push('/dashboard')
+    // Success — new students complete onboarding before the course
+    router.push('/onboarding')
     router.refresh()
   }
 
