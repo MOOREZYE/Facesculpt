@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Logo from '@/components/Logo'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -30,9 +31,7 @@ export default function ExpiredPage() {
     <div className="min-h-screen bg-warm-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm text-center">
         <div className="mb-10">
-          <h1 className="serif text-3xl text-warm-50">
-            FaceSculpt<span className="text-xs align-super not-italic">™</span>
-          </h1>
+          <Logo className="h-12 w-auto mx-auto" />
           <p className="mt-1 text-sm text-warm-500">Professional Training Platform</p>
         </div>
 

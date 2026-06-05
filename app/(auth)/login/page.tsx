@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import Logo from '@/components/Logo'
 import LoginForm from './LoginForm'
 
 export default function LoginPage() {
@@ -6,9 +7,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-warm-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <h1 className="serif text-3xl text-warm-50">
-            FaceSculpt<span className="text-xs align-super not-italic">™</span>
-          </h1>
+          <Logo className="h-12 w-auto mx-auto" />
           <p className="mt-1 text-sm text-warm-500">Professional Training Platform</p>
         </div>
 

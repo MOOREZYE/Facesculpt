@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 export default function HomePage() {
   return (
@@ -6,9 +7,7 @@ export default function HomePage() {
       {/* Navigation */}
       <nav className="border-b border-warm-700 bg-warm-950/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="serif text-xl text-warm-50">
-            FaceSculpt<span className="text-xs align-super not-italic text-warm-500">™</span>
-          </h1>
+          <Logo className="h-8 w-auto" />
           <Link
             href="/login"
             className="text-sm text-warm-400 hover:text-warm-100 transition-colors"

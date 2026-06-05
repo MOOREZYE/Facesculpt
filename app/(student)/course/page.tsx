@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Logo from '@/components/Logo'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getCourseProgress, isModuleLocked, moduleSlug, lessonSlug } from '@/lib'
@@ -40,7 +41,7 @@ export default async function CoursePage() {
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-screen z-40 p-8" style={{background:'linear-gradient(180deg,#111009 0%,#0D0B09 100%)',borderRight:'1px solid #2A2420'}}>
         <div className="mb-14">
-          <p className="serif text-xl text-gold-500 mb-0.5">FaceSculpt™</p>
+          <Logo className="h-9 w-auto mb-2" />
           <p className="text-xs tracking-[0.18em] uppercase text-warm-600">Professional Training</p>
         </div>
 

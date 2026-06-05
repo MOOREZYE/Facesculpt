@@ -12,7 +12,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git commit -m 'feat: add persistent left sidebar to lesson page *)",
       "Bash(git push *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(grep -iE \"\\\\.\\(svg|png|jpg|jpeg|webp|ai|eps|pdf\\)$\")"
     ]
   }
 }

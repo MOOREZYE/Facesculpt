@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Logo from '@/components/Logo'
 
 const links = [
   {
@@ -39,8 +40,8 @@ export default function AdminNav() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-60 bg-white border-r border-gray-200 flex flex-col z-40">
       <div className="px-6 py-5 border-b border-gray-100">
-        <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase">FaceSculpt™</p>
-        <p className="text-sm font-semibold text-gray-900 mt-0.5">Admin Console</p>
+        <Logo className="h-7 w-auto" dark />
+        <p className="text-sm font-semibold text-gray-900 mt-2">Admin Console</p>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
