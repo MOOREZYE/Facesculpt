@@ -40,7 +40,7 @@ export default function AdminNav() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-60 bg-white border-r border-gray-200 flex flex-col z-40">
       <div className="px-6 py-5 border-b border-gray-100">
-        <Logo className="h-7 w-auto" dark />
+        <Logo className="h-11 w-auto" dark />
         <p className="text-sm font-semibold text-gray-900 mt-2">Admin Console</p>
       </div>
 

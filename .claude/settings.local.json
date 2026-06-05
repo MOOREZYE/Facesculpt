@@ -13,7 +13,9 @@
       "Bash(git commit -m 'feat: add persistent left sidebar to lesson page *)",
       "Bash(git push *)",
       "Bash(git commit *)",
-      "Bash(grep -iE \"\\\\.\\(svg|png|jpg|jpeg|webp|ai|eps|pdf\\)$\")"
+      "Bash(grep -iE \"\\\\.\\(svg|png|jpg|jpeg|webp|ai|eps|pdf\\)$\")",
+      "Bash(python3 -c ' *)",
+      "Bash(sips -g all /Users/matthewmoore/FaceSculpt/public/logo.png)"
     ]
   }
 }
