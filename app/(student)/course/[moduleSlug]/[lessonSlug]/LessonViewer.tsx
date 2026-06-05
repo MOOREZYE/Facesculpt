@@ -5,12 +5,15 @@ import Link from 'next/link'
 import type { DbLesson, DbModule, DbProgress } from '@/types'
 import { lessonSlug } from '@/types'
 import LessonNotes from './LessonNotes'
+import QuizRunner from './QuizRunner'
+import type { QuizClientData } from './page'
 
 interface LessonViewerProps {
   lesson: DbLesson
   module: DbModule
   userId: string
   currentProgress?: DbProgress
+  quiz?: QuizClientData | null
   prevLesson?: { lesson: DbLesson; moduleSlug: string } | null
   nextLesson?: { lesson: DbLesson; moduleSlug: string } | null
 }
@@ -19,16 +22,19 @@ export default function LessonViewer({
   lesson,
   module,
   userId,
+  currentProgress,
+  quiz,
   prevLesson,
   nextLesson,
 }: LessonViewerProps) {
+  const isQuiz = lesson.type === 'quiz'
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'resources'>('content')
 
   const metaLabel =
     lesson.type === 'video'
       ? 'Video Lesson • 12 mins'
-      : lesson.type === 'quiz'
-        ? 'Quiz • 10 questions'
+      : isQuiz
+        ? `Quiz • ${quiz?.questions.length ?? 0} questions · pass mark ${quiz?.passMark ?? 80}%`
         : 'Theory Lesson • Read at your pace'
 
   return (
@@ -83,7 +89,7 @@ export default function LessonViewer({
           <div className="mt-8 border-b border-warm-800">
             <div className="flex gap-8">
               {([
-                { key: 'content', label: 'Lesson' },
+                { key: 'content', label: isQuiz ? 'Quiz' : 'Lesson' },
                 { key: 'notes', label: 'My Notes' },
                 { key: 'resources', label: 'Resources' },
               ] as const).map(tab => (
@@ -106,7 +112,19 @@ export default function LessonViewer({
           <div className="mt-8">
             {activeTab === 'content' && (
               <div className="space-y-4">
-                {lesson.content_html ? (
+                {isQuiz ? (
+                  quiz && quiz.questions.length > 0 ? (
+                    <QuizRunner
+                      lessonId={lesson.id}
+                      quiz={quiz}
+                      alreadyPassed={currentProgress?.quiz_passed ?? false}
+                    />
+                  ) : (
+                    <div className="border border-warm-800 rounded-lg p-8 text-center" style={{background:'#111009'}}>
+                      <p className="text-warm-600 text-sm">This quiz has no questions yet.</p>
+                    </div>
+                  )
+                ) : lesson.content_html ? (
                   <div
                     className="prose-warm max-w-none"
                     dangerouslySetInnerHTML={{ __html: lesson.content_html }}

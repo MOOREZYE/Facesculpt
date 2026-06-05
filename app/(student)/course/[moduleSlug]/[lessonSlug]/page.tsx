@@ -5,6 +5,11 @@ import type { DbModule, DbLesson, DbProgress } from '@/types'
 import LessonViewer from './LessonViewer'
 import CourseContentSidebar from './CourseContentSidebar'
 
+export type QuizClientData = {
+  passMark: number
+  questions: { id: string; text: string; options: { id: string; text: string }[] }[]
+}
+
 export default async function LessonPage({
   params,
 }: {
@@ -72,6 +77,41 @@ export default async function LessonPage({
   const prevLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null
   const nextLesson = currentIndex < moduleLessons.length - 1 ? moduleLessons[currentIndex + 1] : null
 
+  // If this is a quiz lesson, load its questions + options (WITHOUT is_correct)
+  let quizData: QuizClientData | null = null
+  if (currentLesson.type === 'quiz') {
+    const { data: quiz } = (await supabase
+      .from('quizzes')
+      .select('id, pass_mark')
+      .eq('lesson_id', currentLesson.id)
+      .maybeSingle()) as { data: { id: string; pass_mark: number } | null }
+
+    if (quiz) {
+      const { data: questions } = (await supabase
+        .from('quiz_questions')
+        .select('id, question_text, order_index')
+        .eq('quiz_id', quiz.id)
+        .order('order_index')) as { data: { id: string; question_text: string; order_index: number }[] | null }
+
+      const { data: options } = (await supabase
+        .from('quiz_options')
+        .select('id, question_id, option_text, order_index')
+        .in('question_id', (questions ?? []).map(q => q.id))
+        .order('order_index')) as { data: { id: string; question_id: string; option_text: string; order_index: number }[] | null }
+
+      quizData = {
+        passMark: quiz.pass_mark,
+        questions: (questions ?? []).map(q => ({
+          id: q.id,
+          text: q.question_text,
+          options: (options ?? [])
+            .filter(o => o.question_id === q.id)
+            .map(o => ({ id: o.id, text: o.option_text })),
+        })),
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-warm-950 flex">
       {/* Left Sidebar Navigation */}
@@ -133,6 +173,7 @@ export default async function LessonPage({
                 module={currentModule}
                 userId={userData.user.id}
                 currentProgress={progress[currentLesson.id]}
+                quiz={quizData}
                 prevLesson={prevLesson ? { lesson: prevLesson, moduleSlug: slugStr } : null}
                 nextLesson={nextLesson ? { lesson: nextLesson, moduleSlug: slugStr } : null}
               />
