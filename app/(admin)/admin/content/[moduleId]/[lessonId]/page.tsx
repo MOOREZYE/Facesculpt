@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
+import type { DbLesson, DbModule } from '@/types'
 import LessonEditorForm from './LessonEditorForm'
 import QuizBuilder from './QuizBuilder'
 
@@ -12,7 +13,7 @@ export default async function LessonEditorPage({
   const { moduleId, lessonId } = await params
   const supabase = createServiceClient()
 
-  const [{ data: lesson }, { data: mod }, { data: quiz }] = await Promise.all([
+  const [{ data: lesson }, { data: mod }, { data: quiz }] = (await Promise.all([
     supabase.from('lessons').select('*').eq('id', lessonId).single(),
     supabase.from('modules').select('id, title').eq('id', moduleId).single(),
     supabase
@@ -20,7 +21,11 @@ export default async function LessonEditorPage({
       .select('id, pass_mark, quiz_questions(id, question_text, order_index, quiz_options(id, option_text, is_correct, order_index))')
       .eq('lesson_id', lessonId)
       .maybeSingle(),
-  ])
+  ])) as [
+    { data: DbLesson | null },
+    { data: Pick<DbModule, 'id' | 'title'> | null },
+    { data: unknown },
+  ]
 
   if (!lesson || !mod) notFound()
 
