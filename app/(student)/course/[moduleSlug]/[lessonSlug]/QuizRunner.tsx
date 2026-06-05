@@ -11,10 +11,12 @@ export default function QuizRunner({
   lessonId,
   quiz,
   alreadyPassed,
+  onPassed,
 }: {
   lessonId: string
   quiz: QuizClientData
   alreadyPassed: boolean
+  onPassed?: () => void
 }) {
   const router = useRouter()
   const [step, setStep] = useState(0)
@@ -87,8 +89,10 @@ export default function QuizRunner({
         setSubmitting(false)
         return
       }
-      setResult(json.data as QuizResult)
+      const r = json.data as QuizResult
+      setResult(r)
       setSubmitting(false)
+      if (r.passed) onPassed?.()
       router.refresh()
     } catch {
       setError('Network error. Please try again.')

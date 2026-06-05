@@ -30,6 +30,11 @@ export default function LessonViewer({
 }: LessonViewerProps) {
   const isQuiz = lesson.type === 'quiz'
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'resources'>('content')
+  const [completed, setCompleted] = useState(currentProgress?.status === 'complete')
+
+  // Video and quiz lessons must be completed before advancing.
+  const requiresCompletion = isQuiz || lesson.type === 'video'
+  const canAdvance = !requiresCompletion || completed
 
   const metaLabel =
     lesson.type === 'video'
@@ -51,7 +56,12 @@ export default function LessonViewer({
       ) : (
         <div />
       )}
-      {nextLesson ? (
+      {!canAdvance ? (
+        <div className="ml-auto flex items-center gap-2 px-5 py-3 rounded-lg border border-warm-800 text-warm-600 text-sm tracking-wide cursor-not-allowed">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+          {lesson.type === 'video' ? 'Watch 80% to continue' : 'Pass the quiz to continue'}
+        </div>
+      ) : nextLesson ? (
         <Link
           href={`/course/${nextLesson.moduleSlug}/${lessonSlug(module.order_index, nextLesson.lesson.order_index)}`}
           className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold hover:bg-gold-400 transition-colors flex items-center gap-2 ml-auto text-sm tracking-wide"
@@ -84,6 +94,7 @@ export default function LessonViewer({
                   lessonId={lesson.id}
                   quiz={quiz}
                   alreadyPassed={currentProgress?.quiz_passed ?? false}
+                  onPassed={() => setCompleted(true)}
                 />
               ) : (
                 <div className="border border-warm-800 rounded-lg p-8 text-center" style={{ background: '#111009' }}>
@@ -109,6 +120,7 @@ export default function LessonViewer({
               lessonId={lesson.id}
               videoUrl={lesson.video_url}
               alreadyComplete={currentProgress?.status === 'complete'}
+              onComplete={() => setCompleted(true)}
             />
           ) : (
             <div className="aspect-video bg-black flex items-center justify-center text-center border-b border-warm-800">

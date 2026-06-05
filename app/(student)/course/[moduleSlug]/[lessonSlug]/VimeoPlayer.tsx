@@ -11,10 +11,12 @@ export default function VimeoPlayer({
   lessonId,
   videoUrl,
   alreadyComplete,
+  onComplete,
 }: {
   lessonId: string
   videoUrl: string
   alreadyComplete: boolean
+  onComplete?: () => void
 }) {
   const router = useRouter()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -31,7 +33,7 @@ export default function VimeoPlayer({
     const player = new Player(containerRef.current, {
       id: Number(videoId),
       ...(videoHash ? { h: videoHash } : {}),
-      responsive: true,
+      width: 1280, // fixed intrinsic size; CSS stretches the iframe to fill
       dnt: true,
     })
 
@@ -45,6 +47,7 @@ export default function VimeoPlayer({
           body: JSON.stringify({ lessonId, status: 'complete' }),
         })
         setJustCompleted(true)
+        onComplete?.()
         router.refresh()
       } catch {
         completedRef.current = false // allow retry on next tick
@@ -82,7 +85,10 @@ export default function VimeoPlayer({
 
   return (
     <div>
-      <div ref={containerRef} className="aspect-video bg-black" />
+      <div
+        ref={containerRef}
+        className="relative aspect-video bg-black overflow-hidden [&_iframe]:absolute [&_iframe]:inset-0 [&_iframe]:h-full [&_iframe]:w-full"
+      />
       {/* Watch-progress strip */}
       <div className="px-6 py-3 border-b border-warm-800 flex items-center gap-3" style={{ background: '#111009' }}>
         <div className="flex-1 h-1 bg-warm-800 rounded-full overflow-hidden">
