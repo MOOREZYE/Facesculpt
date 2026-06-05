@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 async function assertAdmin() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return false
-  const { data } = await supabase.from('users').select('role').eq('id', user.id).single()
+  const { data } = await supabase.from('users').select('role').eq('id', user.id).single() as { data: { role: string } | null }
   return data?.role === 'admin'
 }
 
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
 
   const body = await req.json()
   const { lesson_id, quiz_id, pass_mark, questions } = body
-  const supabase = createServiceClient()
+  const supabase = createServiceClient() as unknown as SupabaseClient
 
   let quizId = quiz_id
 

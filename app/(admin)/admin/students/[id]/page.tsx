@@ -1,22 +1,16 @@
 import { notFound } from 'next/navigation'
 import { createServiceClient } from '@/lib/supabase/server'
+import type { DbUser, DbModule, DbLesson, DbProgress } from '@/types'
 import StudentAccessForm from './StudentAccessForm'
 
 export default async function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = createServiceClient()
 
-  const [
-    { data: student },
-    { data: modules },
-    { data: lessons },
-    { data: progress },
-  ] = await Promise.all([
-    supabase.from('users').select('*').eq('id', id).single(),
-    supabase.from('modules').select('*').eq('is_published', true).order('order_index'),
-    supabase.from('lessons').select('*').eq('is_published', true).order('order_index'),
-    supabase.from('student_progress').select('*').eq('user_id', id),
-  ])
+  const { data: student } = (await supabase.from('users').select('*').eq('id', id).single()) as { data: DbUser | null }
+  const { data: modules } = (await supabase.from('modules').select('*').eq('is_published', true).order('order_index')) as { data: DbModule[] | null }
+  const { data: lessons } = (await supabase.from('lessons').select('*').eq('is_published', true).order('order_index')) as { data: DbLesson[] | null }
+  const { data: progress } = (await supabase.from('student_progress').select('*').eq('user_id', id)) as { data: DbProgress[] | null }
 
   if (!student) notFound()
 

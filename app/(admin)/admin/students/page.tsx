@@ -1,18 +1,19 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 
+type StudentRow = { id: string; full_name: string | null; email: string; enrolled_at: string | null; access_expires_at: string | null; role: string }
+type ProgRow = { user_id: string; lesson_id: string; status: string }
+
 export default async function StudentsPage() {
   const supabase = createServiceClient()
 
-  const [{ data: students }, { data: allLessons }, { data: progress }] = await Promise.all([
-    supabase
-      .from('users')
-      .select('id, full_name, email, enrolled_at, access_expires_at, role')
-      .eq('role', 'student')
-      .order('enrolled_at', { ascending: false }),
-    supabase.from('lessons').select('id').eq('is_published', true),
-    supabase.from('student_progress').select('user_id, lesson_id, status'),
-  ])
+  const { data: students } = (await supabase
+    .from('users')
+    .select('id, full_name, email, enrolled_at, access_expires_at, role')
+    .eq('role', 'student')
+    .order('enrolled_at', { ascending: false })) as { data: StudentRow[] | null }
+  const { data: allLessons } = (await supabase.from('lessons').select('id').eq('is_published', true)) as { data: { id: string }[] | null }
+  const { data: progress } = (await supabase.from('student_progress').select('user_id, lesson_id, status')) as { data: ProgRow[] | null }
 
   const totalLessons = (allLessons ?? []).length
   const progressMap: Record<string, number> = {}

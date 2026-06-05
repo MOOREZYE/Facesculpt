@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
+import type { DbModule, DbLesson } from '@/types'
 import ModuleEditForm from './ModuleEditForm'
 import LessonRow from './LessonRow'
 import CreateLessonButton from './CreateLessonButton'
@@ -9,10 +10,8 @@ export default async function ModulePage({ params }: { params: Promise<{ moduleI
   const { moduleId } = await params
   const supabase = createServiceClient()
 
-  const [{ data: mod }, { data: lessons }] = await Promise.all([
-    supabase.from('modules').select('*').eq('id', moduleId).single(),
-    supabase.from('lessons').select('*').eq('module_id', moduleId).order('order_index'),
-  ])
+  const { data: mod } = (await supabase.from('modules').select('*').eq('id', moduleId).single()) as { data: DbModule | null }
+  const { data: lessons } = (await supabase.from('lessons').select('*').eq('module_id', moduleId).order('order_index')) as { data: DbLesson[] | null }
 
   if (!mod) notFound()
   const allLessons = lessons ?? []

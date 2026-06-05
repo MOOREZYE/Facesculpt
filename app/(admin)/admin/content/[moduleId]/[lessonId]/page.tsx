@@ -13,19 +13,13 @@ export default async function LessonEditorPage({
   const { moduleId, lessonId } = await params
   const supabase = createServiceClient()
 
-  const [{ data: lesson }, { data: mod }, { data: quiz }] = (await Promise.all([
-    supabase.from('lessons').select('*').eq('id', lessonId).single(),
-    supabase.from('modules').select('id, title').eq('id', moduleId).single(),
-    supabase
-      .from('quizzes')
-      .select('id, pass_mark, quiz_questions(id, question_text, order_index, quiz_options(id, option_text, is_correct, order_index))')
-      .eq('lesson_id', lessonId)
-      .maybeSingle(),
-  ])) as [
-    { data: DbLesson | null },
-    { data: Pick<DbModule, 'id' | 'title'> | null },
-    { data: unknown },
-  ]
+  const { data: lesson } = (await supabase.from('lessons').select('*').eq('id', lessonId).single()) as { data: DbLesson | null }
+  const { data: mod } = (await supabase.from('modules').select('id, title').eq('id', moduleId).single()) as { data: Pick<DbModule, 'id' | 'title'> | null }
+  const { data: quiz } = await supabase
+    .from('quizzes')
+    .select('id, pass_mark, quiz_questions(id, question_text, order_index, quiz_options(id, option_text, is_correct, order_index))')
+    .eq('lesson_id', lessonId)
+    .maybeSingle()
 
   if (!lesson || !mod) notFound()
 

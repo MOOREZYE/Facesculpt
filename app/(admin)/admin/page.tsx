@@ -1,27 +1,24 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 
+type ModRow = { id: string; title: string; order_index: number }
+type LessonRow = { id: string; module_id: string }
+type ProgRow = { user_id: string; lesson_id: string; status: string }
+type StudentRow = { id: string; full_name: string | null; email: string; enrolled_at: string | null; access_expires_at: string | null }
+
 export default async function AdminDashboardPage() {
   const supabase = createServiceClient()
 
-  const [
-    { count: totalStudents },
-    { data: modules },
-    { data: lessons },
-    { data: progressRows },
-    { data: recentStudents },
-  ] = await Promise.all([
-    supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'student'),
-    supabase.from('modules').select('id, title, order_index').eq('is_published', true).order('order_index'),
-    supabase.from('lessons').select('id, module_id').eq('is_published', true),
-    supabase.from('student_progress').select('user_id, lesson_id, status'),
-    supabase
-      .from('users')
-      .select('id, full_name, email, enrolled_at, access_expires_at')
-      .eq('role', 'student')
-      .order('enrolled_at', { ascending: false })
-      .limit(8),
-  ])
+  const { count: totalStudents } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'student')
+  const { data: modules } = (await supabase.from('modules').select('id, title, order_index').eq('is_published', true).order('order_index')) as { data: ModRow[] | null }
+  const { data: lessons } = (await supabase.from('lessons').select('id, module_id').eq('is_published', true)) as { data: LessonRow[] | null }
+  const { data: progressRows } = (await supabase.from('student_progress').select('user_id, lesson_id, status')) as { data: ProgRow[] | null }
+  const { data: recentStudents } = (await supabase
+    .from('users')
+    .select('id, full_name, email, enrolled_at, access_expires_at')
+    .eq('role', 'student')
+    .order('enrolled_at', { ascending: false })
+    .limit(8)) as { data: StudentRow[] | null }
 
   const allLessons = lessons ?? []
   const allProgress = progressRows ?? []

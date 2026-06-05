@@ -1,15 +1,14 @@
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
+import type { DbModule, DbLesson } from '@/types'
 import CreateModuleButton from './CreateModuleButton'
 import ModuleReorderRow from './ModuleReorderRow'
 
 export default async function ContentPage() {
   const supabase = createServiceClient()
 
-  const [{ data: modules }, { data: lessons }] = await Promise.all([
-    supabase.from('modules').select('*').order('order_index'),
-    supabase.from('lessons').select('id, module_id, title, type, order_index, is_published').order('order_index'),
-  ])
+  const { data: modules } = (await supabase.from('modules').select('*').order('order_index')) as { data: DbModule[] | null }
+  const { data: lessons } = (await supabase.from('lessons').select('id, module_id, title, type, order_index, is_published').order('order_index')) as { data: DbLesson[] | null }
 
   const allModules = modules ?? []
   const allLessons = lessons ?? []

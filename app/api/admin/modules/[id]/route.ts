@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
 async function assertAdmin() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return false
-  const { data } = await supabase.from('users').select('role').eq('id', user.id).single()
+  const { data } = await supabase.from('users').select('role').eq('id', user.id).single() as { data: { role: string } | null }
   return data?.role === 'admin'
 }
 
@@ -14,15 +15,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params
   const body = await req.json()
-  const supabase = createServiceClient()
+  const supabase = createServiceClient() as unknown as SupabaseClient
 
   // Handle reorder
   if (body.reorder) {
-    const { data: current } = await supabase.from('modules').select('order_index').eq('id', id).single()
+    const { data: current } = (await supabase.from('modules').select('order_index').eq('id', id).single()) as { data: { order_index: number } | null }
     if (!current) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
     const newIndex = body.reorder === 'up' ? current.order_index - 1 : current.order_index + 1
-    const { data: swap } = await supabase.from('modules').select('id').eq('order_index', newIndex).single()
+    const { data: swap } = (await supabase.from('modules').select('id').eq('order_index', newIndex).single()) as { data: { id: string } | null }
     if (swap) {
       await supabase.from('modules').update({ order_index: current.order_index }).eq('id', swap.id)
     }
@@ -44,7 +45,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   if (!(await assertAdmin())) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { id } = await params
-  const supabase = createServiceClient()
+  const supabase = createServiceClient() as unknown as SupabaseClient
 
   // Delete lessons first
   await supabase.from('lessons').delete().eq('module_id', id)
