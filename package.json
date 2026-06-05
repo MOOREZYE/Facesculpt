@@ -13,6 +13,7 @@
     "@stripe/stripe-js": "^9.7.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
+    "@vimeo/player": "^2.30.4",
     "next": "^14.2.35",
     "react": "^18",
     "react-dom": "^18",

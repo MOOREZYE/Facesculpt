@@ -6,6 +6,7 @@ import type { DbLesson, DbModule, DbProgress } from '@/types'
 import { lessonSlug } from '@/types'
 import LessonNotes from './LessonNotes'
 import QuizRunner from './QuizRunner'
+import VimeoPlayer from './VimeoPlayer'
 import type { QuizClientData } from './page'
 
 interface LessonViewerProps {
@@ -32,7 +33,7 @@ export default function LessonViewer({
 
   const metaLabel =
     lesson.type === 'video'
-      ? 'Video Lesson • 12 mins'
+      ? 'Video Lesson • Watch 80% to complete'
       : isQuiz
         ? `Quiz • ${quiz?.questions.length ?? 0} questions · pass mark ${quiz?.passMark ?? 80}%`
         : 'Theory Lesson • Read at your pace'
@@ -103,13 +104,21 @@ export default function LessonViewer({
       <div className="card overflow-hidden">
         {/* Video/Hero Area */}
         {lesson.type === 'video' ? (
-          <div className="aspect-video bg-black flex items-center justify-center text-center border-b border-warm-800">
-            <div>
-              <svg className="w-16 h-16 mx-auto mb-4 text-warm-500" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
-              <p className="text-warm-300">Video Lesson</p>
-              <p className="text-sm text-warm-500 mt-2">Vimeo embed will appear here when configured</p>
+          lesson.video_url ? (
+            <VimeoPlayer
+              lessonId={lesson.id}
+              videoUrl={lesson.video_url}
+              alreadyComplete={currentProgress?.status === 'complete'}
+            />
+          ) : (
+            <div className="aspect-video bg-black flex items-center justify-center text-center border-b border-warm-800">
+              <div>
+                <svg className="w-16 h-16 mx-auto mb-4 text-warm-500" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
+                <p className="text-warm-300">Video Lesson</p>
+                <p className="text-sm text-warm-500 mt-2">No video configured for this lesson yet</p>
+              </div>
             </div>
-          </div>
+          )
         ) : (
           <div className="aspect-video bg-warm-950 flex items-center justify-center text-center border-b border-warm-700 relative overflow-hidden">
             <div className="absolute inset-0 bg-gold-500/5" />
