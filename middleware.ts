@@ -59,13 +59,9 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
-  // Role-based guard: /admin routes require admin role
-  if (pathname.startsWith('/admin')) {
-    const role: string = user.user_metadata?.role ?? 'student'
-    if (role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-  }
+  // Role-based access to /admin is enforced in app/(admin)/layout.tsx,
+  // which reads the role from the users table (single source of truth).
+  // Middleware only guarantees an authenticated session here.
 
   return supabaseResponse
 }
