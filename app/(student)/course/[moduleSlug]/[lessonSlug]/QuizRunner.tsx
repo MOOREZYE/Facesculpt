@@ -28,15 +28,31 @@ export default function QuizRunner({
   const isLast = step === total - 1
   const currentAnswered = current ? !!answers[current.id] : false
 
-  // ── Already passed: show a completed state, no quiz, no retake ──
-  if (alreadyPassed && !result) {
+  const [retaking, setRetaking] = useState(false)
+
+  function retake() {
+    setStep(0)
+    setAnswers({})
+    setResult(null)
+    setError(null)
+    setRetaking(true)
+  }
+
+  // ── Already passed: show a completed state with a retake option ──
+  if (alreadyPassed && !result && !retaking) {
     return (
       <div className="text-center py-12">
         <div className="w-14 h-14 rounded-full bg-gold-500 flex items-center justify-center mx-auto mb-5">
           <svg className="w-7 h-7 text-warm-950" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" /></svg>
         </div>
         <h3 className="serif text-2xl text-warm-50 mb-2">Quiz Completed</h3>
-        <p className="text-warm-500 text-sm">You&apos;ve passed this quiz. Continue to the next lesson below.</p>
+        <p className="text-warm-500 text-sm mb-6">You&apos;ve passed this quiz. Continue to the next lesson below.</p>
+        <button
+          onClick={retake}
+          className="px-6 py-2.5 border border-warm-700 text-warm-200 rounded-lg font-medium text-sm hover:border-gold-500/40 hover:text-gold-400 transition-colors"
+        >
+          Retake Quiz
+        </button>
       </div>
     )
   }
@@ -109,8 +125,14 @@ export default function QuizRunner({
           {result.passed ? (
             <p className="text-sm text-warm-500 mt-4">Lesson marked complete. Continue below.</p>
           ) : (
-            <p className="text-sm text-warm-500 mt-4">Refresh the page to attempt the quiz again.</p>
+            <p className="text-sm text-warm-500 mt-4">Review your answers below, then retake the quiz.</p>
           )}
+          <button
+            onClick={retake}
+            className="mt-6 px-6 py-2.5 border border-warm-700 text-warm-200 rounded-lg font-medium text-sm hover:border-gold-500/40 hover:text-gold-400 transition-colors"
+          >
+            Retake Quiz
+          </button>
         </div>
 
         {/* Per-question review */}
