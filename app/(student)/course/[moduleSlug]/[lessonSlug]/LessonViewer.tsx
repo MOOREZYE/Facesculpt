@@ -31,9 +31,26 @@ export default function LessonViewer({
 }: LessonViewerProps) {
   const router = useRouter()
   const isQuiz = lesson.type === 'quiz'
+  const isVideo = lesson.type === 'video'
   const [activeTab, setActiveTab] = useState<'content' | 'notes' | 'resources'>('content')
   const [completed, setCompleted] = useState(currentProgress?.status === 'complete')
   const [resetting, setResetting] = useState(false)
+  const [marking, setMarking] = useState(false)
+
+  async function markComplete() {
+    setMarking(true)
+    try {
+      await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonId: lesson.id, status: 'complete' }),
+      })
+      setCompleted(true)
+      router.refresh()
+    } finally {
+      setMarking(false)
+    }
+  }
 
   async function resetCompletion() {
     setResetting(true)
@@ -63,9 +80,8 @@ export default function LessonViewer({
     </div>
   )
 
-  // Video and quiz lessons must be completed before advancing.
-  const requiresCompletion = isQuiz || lesson.type === 'video'
-  const canAdvance = !requiresCompletion || completed
+  // Every lesson must be completed before advancing.
+  const canAdvance = completed
 
   const metaLabel =
     lesson.type === 'video'
@@ -90,7 +106,11 @@ export default function LessonViewer({
       {!canAdvance ? (
         <div className="ml-auto flex items-center gap-2 px-5 py-3 rounded-lg border border-warm-800 text-warm-600 text-sm tracking-wide cursor-not-allowed">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-          {lesson.type === 'video' ? 'Finish the video to continue' : 'Pass the quiz to continue'}
+          {lesson.type === 'video'
+            ? 'Finish the video to continue'
+            : isQuiz
+              ? 'Pass the quiz to continue'
+              : 'Mark complete to continue'}
         </div>
       ) : nextLesson ? (
         <Link
@@ -233,6 +253,26 @@ export default function LessonViewer({
                 ) : (
                   <div className="border border-warm-800 rounded-lg p-8 text-center" style={{background:'#111009'}}>
                     <p className="text-warm-600 text-sm">Lesson content will appear here.</p>
+                  </div>
+                )}
+
+                {/* Mark complete — for reading lessons (not video) */}
+                {!isVideo && (
+                  <div className="pt-6 mt-6 border-t border-warm-800">
+                    {completed ? (
+                      <div className="flex items-center gap-2 text-gold-400 text-sm">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" /></svg>
+                        Lesson completed
+                      </div>
+                    ) : (
+                      <button
+                        onClick={markComplete}
+                        disabled={marking}
+                        className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold text-sm hover:bg-gold-400 transition-colors disabled:opacity-50"
+                      >
+                        {marking ? 'Saving…' : 'Mark as Complete'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
