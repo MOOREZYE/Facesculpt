@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface QuizOption { id?: string; option_text: string; is_correct: boolean; order_index: number }
 interface QuizQuestion { id?: string; question_text: string; order_index: number; quiz_options: QuizOption[] }
@@ -26,6 +27,8 @@ export default function QuizBuilder({
   )
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const router = useRouter()
 
   function addQuestion() {
     setQuestions(prev => [
@@ -97,19 +100,33 @@ export default function QuizBuilder({
 
   async function save() {
     setSaving(true)
-    await fetch('/api/admin/quiz', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        lesson_id: lessonId,
-        quiz_id: existingQuiz?.id ?? null,
-        pass_mark: passMark,
-        questions,
-      }),
-    })
-    setSaving(false)
-    setSuccess(true)
-    setTimeout(() => setSuccess(false), 2000)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/admin/quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lesson_id: lessonId,
+          quiz_id: existingQuiz?.id ?? null,
+          pass_mark: passMark,
+          questions,
+        }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setSaveError(json.error ?? 'Save failed. Please try again.')
+        setSaving(false)
+        return
+      }
+      setSaving(false)
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 2500)
+      // Re-pull fresh server data so the saved quiz reflects immediately
+      router.refresh()
+    } catch {
+      setSaveError('Network error. Please try again.')
+      setSaving(false)
+    }
   }
 
   return (
@@ -117,6 +134,7 @@ export default function QuizBuilder({
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <h2 className="text-sm font-semibold text-gray-900">Quiz Builder</h2>
         <div className="flex items-center gap-3">
+          {saveError && <span className="text-xs text-red-600">{saveError}</span>}
           {success && <span className="text-xs text-green-600">Saved ✓</span>}
           <button
             onClick={save}

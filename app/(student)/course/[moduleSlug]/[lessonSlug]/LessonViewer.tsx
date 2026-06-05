@@ -37,6 +37,66 @@ export default function LessonViewer({
         ? `Quiz • ${quiz?.questions.length ?? 0} questions · pass mark ${quiz?.passMark ?? 80}%`
         : 'Theory Lesson • Read at your pace'
 
+  const nav = (
+    <div className="flex gap-4 justify-between mt-2">
+      {prevLesson ? (
+        <Link
+          href={`/course/${prevLesson.moduleSlug}/${lessonSlug(module.order_index, prevLesson.lesson.order_index)}`}
+          className="px-6 py-3 border border-warm-800 text-warm-500 rounded-lg hover:border-warm-700 hover:text-warm-300 transition-colors flex items-center gap-2 text-sm tracking-wide"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+          Previous
+        </Link>
+      ) : (
+        <div />
+      )}
+      {nextLesson ? (
+        <Link
+          href={`/course/${nextLesson.moduleSlug}/${lessonSlug(module.order_index, nextLesson.lesson.order_index)}`}
+          className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold hover:bg-gold-400 transition-colors flex items-center gap-2 ml-auto text-sm tracking-wide"
+        >
+          Next Lesson
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+        </Link>
+      ) : (
+        <button className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold hover:bg-gold-400 transition-colors ml-auto text-sm tracking-wide">
+          Complete &amp; Finish
+        </button>
+      )}
+    </div>
+  )
+
+  // ── Quiz lessons: clean, focused — no hero, no tabs, just the quiz ──
+  if (isQuiz) {
+    return (
+      <div className="space-y-6">
+        <div className="card overflow-hidden">
+          <div className="p-10">
+            <div className="mb-8">
+              <p className="text-xs tracking-[0.2em] uppercase text-gold-500 mb-3">Quiz</p>
+              <h1 className="serif text-4xl text-warm-50 mb-3 leading-snug">{lesson.title}</h1>
+              <p className="text-warm-500 text-sm">{metaLabel}</p>
+            </div>
+            <div className="border-t border-warm-800 pt-8">
+              {quiz && quiz.questions.length > 0 ? (
+                <QuizRunner
+                  lessonId={lesson.id}
+                  quiz={quiz}
+                  alreadyPassed={currentProgress?.quiz_passed ?? false}
+                />
+              ) : (
+                <div className="border border-warm-800 rounded-lg p-8 text-center" style={{ background: '#111009' }}>
+                  <p className="text-warm-600 text-sm">This quiz has no questions yet.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {nav}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Lesson Content Card */}
@@ -89,7 +149,7 @@ export default function LessonViewer({
           <div className="mt-8 border-b border-warm-800">
             <div className="flex gap-8">
               {([
-                { key: 'content', label: isQuiz ? 'Quiz' : 'Lesson' },
+                { key: 'content', label: 'Lesson' },
                 { key: 'notes', label: 'My Notes' },
                 { key: 'resources', label: 'Resources' },
               ] as const).map(tab => (
@@ -112,19 +172,7 @@ export default function LessonViewer({
           <div className="mt-8">
             {activeTab === 'content' && (
               <div className="space-y-4">
-                {isQuiz ? (
-                  quiz && quiz.questions.length > 0 ? (
-                    <QuizRunner
-                      lessonId={lesson.id}
-                      quiz={quiz}
-                      alreadyPassed={currentProgress?.quiz_passed ?? false}
-                    />
-                  ) : (
-                    <div className="border border-warm-800 rounded-lg p-8 text-center" style={{background:'#111009'}}>
-                      <p className="text-warm-600 text-sm">This quiz has no questions yet.</p>
-                    </div>
-                  )
-                ) : lesson.content_html ? (
+                {lesson.content_html ? (
                   <div
                     className="prose-warm max-w-none"
                     dangerouslySetInnerHTML={{ __html: lesson.content_html }}
@@ -150,40 +198,7 @@ export default function LessonViewer({
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex gap-4 justify-between mt-2">
-        {prevLesson ? (
-          <Link
-            href={`/course/${prevLesson.moduleSlug}/${lessonSlug(
-              module.order_index,
-              prevLesson.lesson.order_index
-            )}`}
-            className="px-6 py-3 border border-warm-800 text-warm-500 rounded-lg hover:border-warm-700 hover:text-warm-300 transition-colors flex items-center gap-2 text-sm tracking-wide"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
-            Previous
-          </Link>
-        ) : (
-          <div />
-        )}
-
-        {nextLesson ? (
-          <Link
-            href={`/course/${nextLesson.moduleSlug}/${lessonSlug(
-              module.order_index,
-              nextLesson.lesson.order_index
-            )}`}
-            className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold hover:bg-gold-400 transition-colors flex items-center gap-2 ml-auto text-sm tracking-wide"
-          >
-            Next Lesson
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
-          </Link>
-        ) : (
-          <button className="px-7 py-3 bg-gold-500 text-warm-950 rounded-lg font-semibold hover:bg-gold-400 transition-colors ml-auto text-sm tracking-wide">
-            Complete &amp; Finish
-          </button>
-        )}
-      </div>
+      {nav}
     </div>
   )
 }

@@ -5,6 +5,9 @@ import type { DbLesson, DbModule } from '@/types'
 import LessonEditorForm from './LessonEditorForm'
 import QuizBuilder from './QuizBuilder'
 
+// Always fetch fresh — never serve a cached render after an edit/save
+export const dynamic = 'force-dynamic'
+
 export default async function LessonEditorPage({
   params,
 }: {
