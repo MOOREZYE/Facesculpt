@@ -38,7 +38,7 @@ export default function LessonViewer({
 
   const metaLabel =
     lesson.type === 'video'
-      ? 'Video Lesson • Watch 80% to complete'
+      ? 'Video Lesson • Watch in full to complete'
       : isQuiz
         ? `Quiz • ${quiz?.questions.length ?? 0} questions · pass mark ${quiz?.passMark ?? 80}%`
         : 'Theory Lesson • Read at your pace'
@@ -59,7 +59,7 @@ export default function LessonViewer({
       {!canAdvance ? (
         <div className="ml-auto flex items-center gap-2 px-5 py-3 rounded-lg border border-warm-800 text-warm-600 text-sm tracking-wide cursor-not-allowed">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 00-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-          {lesson.type === 'video' ? 'Watch 80% to continue' : 'Pass the quiz to continue'}
+          {lesson.type === 'video' ? 'Finish the video to continue' : 'Pass the quiz to continue'}
         </div>
       ) : nextLesson ? (
         <Link
