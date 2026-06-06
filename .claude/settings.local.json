@@ -15,7 +15,9 @@
       "Bash(git commit *)",
       "Bash(grep -iE \"\\\\.\\(svg|png|jpg|jpeg|webp|ai|eps|pdf\\)$\")",
       "Bash(python3 -c ' *)",
-      "Bash(sips -g all /Users/matthewmoore/FaceSculpt/public/logo.png)"
+      "Bash(sips -g all /Users/matthewmoore/FaceSculpt/public/logo.png)",
+      "Bash(cp \"/Users/matthewmoore/Downloads/Face Sculpt-2.png\" public/logo.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight public/logo.png)"
     ]
   }
 }

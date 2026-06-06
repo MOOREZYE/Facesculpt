@@ -29,7 +29,7 @@ export default async function OnboardingPage() {
     <div className="min-h-screen bg-warm-950 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-xl">
         <div className="text-center mb-10">
-          <Logo className="h-20 w-auto mx-auto" />
+          <Logo className="h-24 w-auto mx-auto" />
           <p className="mt-2 text-xs tracking-[0.2em] uppercase text-warm-600">
             Before we begin
           </p>

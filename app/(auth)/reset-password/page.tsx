@@ -8,7 +8,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-warm-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <Logo className="h-20 w-auto mx-auto" />
+          <Logo className="h-24 w-auto mx-auto" />
           <p className="mt-1 text-sm text-warm-500">Professional Training Platform</p>
         </div>
 
