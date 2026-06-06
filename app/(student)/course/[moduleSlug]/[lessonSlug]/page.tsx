@@ -118,7 +118,7 @@ export default async function LessonPage({
       {/* Left Sidebar Navigation */}
       <aside className="hidden md:flex flex-col w-64 fixed left-0 top-0 h-screen z-40 p-8" style={{background:'linear-gradient(180deg,#111009 0%,#0D0B09 100%)',borderRight:'1px solid #2A2420'}}>
         <div className="mb-14">
-          <Logo className="h-16 w-auto mb-3" />
+          <Logo className="w-28 h-auto mb-3" />
           <p className="text-xs tracking-[0.18em] uppercase text-warm-600">Professional Training</p>
         </div>
 
