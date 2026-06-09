@@ -165,33 +165,23 @@ export default function LessonViewer({
     <div className="space-y-6">
       {/* Lesson Content Card */}
       <div className="card overflow-hidden">
-        {/* Video/Hero Area */}
-        {lesson.type === 'video' ? (
-          lesson.video_url ? (
-            <VimeoPlayer
-              lessonId={lesson.id}
-              videoUrl={lesson.video_url}
-              alreadyComplete={currentProgress?.status === 'complete'}
-              onComplete={() => setCompleted(true)}
-            />
-          ) : (
-            <div className="aspect-video bg-black flex items-center justify-center text-center border-b border-warm-800">
-              <div>
-                <svg className="w-16 h-16 mx-auto mb-4 text-warm-500" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
-                <p className="text-warm-300">Video Lesson</p>
-                <p className="text-sm text-warm-500 mt-2">No video configured for this lesson yet</p>
-              </div>
-            </div>
-          )
-        ) : (
-          <div className="aspect-video bg-warm-950 flex items-center justify-center text-center border-b border-warm-700 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gold-500/5" />
-            <div className="relative">
-              <svg className="w-16 h-16 mx-auto mb-4 text-gold-500/60" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-              <p className="text-warm-300 font-medium capitalize">{lesson.type} Lesson</p>
+        {/* Video area — only render when there's an actual video */}
+        {lesson.video_url ? (
+          <VimeoPlayer
+            lessonId={lesson.id}
+            videoUrl={lesson.video_url}
+            alreadyComplete={currentProgress?.status === 'complete'}
+            onComplete={() => setCompleted(true)}
+          />
+        ) : lesson.type === 'video' ? (
+          <div className="aspect-video bg-black flex items-center justify-center text-center border-b border-warm-800">
+            <div>
+              <svg className="w-16 h-16 mx-auto mb-4 text-warm-500" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>
+              <p className="text-warm-300">Video Lesson</p>
+              <p className="text-sm text-warm-500 mt-2">No video configured for this lesson yet</p>
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* Lesson Info */}
         <div className="p-10">
